@@ -164,6 +164,7 @@ monster::monster()
     mission_id = -1;
     no_extra_death_drops = false;
     dead = false;
+    death_drops = true;
     made_footstep = false;
     hallucination = false;
     ignoring = 0;
@@ -448,14 +449,16 @@ std::string monster::name_with_armor() const
 {
     std::string ret;
     if( type->in_species( INSECT ) ) {
-        ret = string_format(_("carapace"));
+        ret = string_format( _( "carapace" ) );
     } else if( made_of( material_id( "veggy" ) ) ) {
-        ret = string_format(_("thick bark"));
+        ret = string_format( _( "thick bark" ) );
+    } else if( made_of( material_id( "bone" ) ) ) {
+        ret = string_format( _( "exoskeleton" ) );
     } else if( made_of( material_id( "flesh" ) ) || made_of( material_id( "hflesh" ) ) ||
                made_of( material_id( "iflesh" ) ) ) {
-        ret = string_format(_("thick hide"));
-    } else if( made_of( material_id( "iron" ) ) || made_of( material_id( "steel" ) )) {
-        ret = string_format(_("armor plating"));
+        ret = string_format( _( "thick hide" ) );
+    } else if( made_of( material_id( "iron" ) ) || made_of( material_id( "steel" ) ) ) {
+        ret = string_format( _( "armor plating" ) );
     }
     return ret;
 }
@@ -1758,6 +1761,9 @@ void monster::die(Creature* nkiller)
     g->set_critter_died();
     dead = true;
     set_killer( nkiller );
+    if( !death_drops ){
+        return;
+    }
     if (!no_extra_death_drops) {
         drop_items_on_death();
     }
